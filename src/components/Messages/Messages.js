@@ -72,3 +72,4 @@ class Messages extends React.Component {
 }
 
 export default Messages;
+
