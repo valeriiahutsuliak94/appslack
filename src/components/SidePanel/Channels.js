@@ -21,7 +21,7 @@ class Channels extends React.Component {
   }
 
   componentWillUnmount() {
-    this.removeListeners()
+    this.removeListeners();
   }
 
   addListeners = () => {
@@ -33,8 +33,8 @@ class Channels extends React.Component {
   };
 
   removeListeners = () => {
-    this.state.channelsRef.off()
-  }
+    this.state.channelsRef.off();
+  };
 
   setFirstChannel = () => {
     const firstChannel = this.state.channels[0];
@@ -119,7 +119,7 @@ class Channels extends React.Component {
 
     return (
       <React.Fragment>
-        <Menu.Menu style={{ paddingBottom: "2em" }}>
+        <Menu.Menu className="menu">
           <Menu.Item>
             <span>
               <Icon name="exchange" /> CHANNELS
