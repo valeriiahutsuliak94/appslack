@@ -174,3 +174,4 @@ export default connect(
   { setCurrentChannel, setPrivateChannel }
 )(Channels);
 
+
