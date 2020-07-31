@@ -1,59 +1,73 @@
-import { combineReducers } from "redux";
-import * as actionTypes from "../actions/types";
+import React from "react";
+import ReactDOM from "react-dom";
+import App from "./components/App";
+import Login from "./components/Auth/Login";
+import Register from "./components/Auth/Register";
+import Spinner from "./Spinner";
+import registerServiceWorker from "./registerServiceWorker";
+import firebase from "./firebase";
 
-const initialUserState = {
-  currentUser: null,
-  isLoading: true
-};
+import "semantic-ui-css/semantic.min.css";
 
-const user_reducer = (state = initialUserState, action) => {
-  switch (action.type) {
-    case actionTypes.SET_USER:
-      return {
-        currentUser: action.payload.currentUser,
-        isLoading: false
-      };
-    case actionTypes.CLEAR_USER:
-      return {
-        ...state,
-        isLoading: false
-      };
-    default:
-      return state;
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  withRouter
+} from "react-router-dom";
+
+import { createStore } from "redux";
+import { Provider, connect } from "react-redux";
+import { composeWithDevTools } from "redux-devtools-extension";
+import rootReducer from "./reducers";
+import { setUser, clearUser } from "./actions";
+
+const store = createStore(rootReducer, composeWithDevTools());
+
+class Root extends React.Component {
+  componentDidMount() {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        // console.log(user);
+        this.props.setUser(user);
+        this.props.history.push("/");
+      } else {
+        this.props.history.push("/login");
+        this.props.clearUser();
+      }
+    });
   }
-};
 
-const initialChannelState = {
-  currentChannel: null,
-  isPrivateChannel: false,
-  userPosts: null
-};
-
-const channel_reducer = (state = initialChannelState, action) => {
-  switch (action.type) {
-    case actionTypes.SET_CURRENT_CHANNEL:
-      return {
-        ...state,
-        currentChannel: action.payload.currentChannel
-      };
-    case actionTypes.SET_PRIVATE_CHANNEL:
-      return {
-        ...state,
-        isPrivateChannel: action.payload.isPrivateChannel
-      };
-    case actionTypes.SET_USER_POSTS:
-      return {
-        ...state,
-        userPosts: action.payload.userPosts
-      };
-    default:
-      return state;
+  render() {
+    return this.props.isLoading ? (
+      <Spinner />
+    ) : (
+      <Switch>
+        <Route exact path="/" component={App} />
+        <Route path="/login" component={Login} />
+        <Route path="/register" component={Register} />
+      </Switch>
+    );
   }
-};
+}
 
-const rootReducer = combineReducers({
-  user: user_reducer,
-  channel: channel_reducer
+const mapStateFromProps = state => ({
+  isLoading: state.user.isLoading
 });
 
-export default rootReducer;
+const RootWithAuth = withRouter(
+  connect(
+    mapStateFromProps,
+    { setUser, clearUser }
+  )(Root)
+);
+
+ReactDOM.render(
+  <Provider store={store}>
+    <Router>
+      <RootWithAuth />
+    </Router>
+  </Provider>,
+  document.getElementById("root")
+);
+registerServiceWorker();
