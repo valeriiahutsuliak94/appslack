@@ -279,6 +279,16 @@ class Messages extends React.Component {
 
     return (
       <React.Fragment>
+          <Segment>
+          <Comment.Group className="messages">
+            {this.displayMessageSkeleton(messagesLoading)}
+            {searchTerm
+              ? this.displayMessages(searchResults)
+              : this.displayMessages(messages)}
+            {this.displayTypingUsers(typingUsers)}
+            <div ref={node => (this.messagesEnd = node)} />
+          </Comment.Group>
+        </Segment>
         <MessagesHeader
           channelName={this.displayChannelName(channel)}
           numUniqueUsers={numUniqueUsers}
@@ -289,16 +299,7 @@ class Messages extends React.Component {
           isChannelStarred={isChannelStarred}
         />
 
-        <Segment>
-          <Comment.Group className="messages">
-            {this.displayMessageSkeleton(messagesLoading)}
-            {searchTerm
-              ? this.displayMessages(searchResults)
-              : this.displayMessages(messages)}
-            {this.displayTypingUsers(typingUsers)}
-            <div ref={node => (this.messagesEnd = node)} />
-          </Comment.Group>
-        </Segment>
+      
 
         <MessageForm
           messagesRef={messagesRef}

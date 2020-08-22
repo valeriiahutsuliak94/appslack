@@ -42,9 +42,9 @@ class MessagesHeader extends React.Component {
           />
         </Header>
       </Segment>
-    );
-  }
-}
+    )
+            }
+          }
 
 export default MessagesHeader;
 
